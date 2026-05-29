@@ -1,18 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Controle de Assistência Técnica — Conceito Informática</title>
+<title>Conceito Informática — Sistema de Gestão</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f4f4f2;color:#2C2C2A;min-height:100vh}
-.topbar{background:#2C2C2A;padding:14px 20px;display:flex;align-items:center;gap:14px;border-bottom:4px solid #E86310;flex-wrap:wrap}
-.topbar-title{color:white;font-size:16px;font-weight:700;letter-spacing:1px;flex:1;min-width:140px}
+
+/* ── TOPBAR ── */
+.topbar{background:#2C2C2A;padding:12px 20px;display:flex;align-items:center;gap:14px;border-bottom:4px solid #E86310;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.topbar-title{color:white;font-size:15px;font-weight:700;letter-spacing:1px;flex:1;min-width:120px}
 .sync-status{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);color:#aaa;white-space:nowrap}
 .sync-status.ok{color:#1D9E75}.sync-status.err{color:#E24B4A}.sync-status.sync{color:#E86310}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;background:#1e1e1e;padding:0 20px}
+.tab{padding:11px 22px;font-size:13px;font-weight:700;color:#888;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px;letter-spacing:.3px;white-space:nowrap}
+.tab:hover{color:#ccc}
+.tab.active{color:#E86310;border-bottom-color:#E86310}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
 .container{max-width:1100px;margin:0 auto;padding:16px}
+
+/* ── SETUP ── */
 .setup-card{background:white;border-radius:12px;padding:22px;margin-bottom:20px;border:2px solid #E86310}
 .setup-card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .setup-card h2 i{color:#E86310}
@@ -25,32 +39,45 @@ body{font-family:Arial,sans-serif;background:#f4f4f2;color:#2C2C2A;min-height:10
 .url-row{display:flex;gap:10px;flex-wrap:wrap}
 .url-row input{flex:1;min-width:200px;font-size:12px;padding:9px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;color:#2C2C2A;outline:none;font-family:monospace}
 .url-row input:focus{border-color:#E86310}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.tip{background:#fffbe6;border:1px solid #f0d060;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a6000;margin-top:10px;line-height:1.6}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
 .metric{background:white;border-radius:10px;padding:14px;border:0.5px solid #ddd}
 .metric-label{font-size:10px;color:#888;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
 .metric-value{font-size:22px;font-weight:700;color:#2C2C2A}
 .metric-value.green{color:#1D9E75}.metric-value.amber{color:#BA7517}.metric-value.blue{color:#1A6FB5}
+
+/* ── CARDS ── */
 .card{background:white;border-radius:12px;padding:16px 20px;margin-bottom:16px;border:0.5px solid #ddd}
 .card-title{font-size:14px;font-weight:700;color:#2C2C2A;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .card-title i{color:#E86310;font-size:17px}
+
+/* ── FORM ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
 .form-grid.full{grid-template-columns:1fr}
 .field{display:flex;flex-direction:column;gap:4px}
 .field label{font-size:11px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.field input,.field select,.field textarea{font-size:13px;padding:9px 12px;border-radius:8px;border:1px solid #ddd;background:#fafafa;color:#2C2C2A;width:100%;outline:none;transition:border .2s}
+.field input,.field select,.field textarea{font-size:13px;padding:9px 12px;border-radius:8px;border:1px solid #ddd;background:#fafafa;color:#2C2C2A;width:100%;outline:none;transition:border .2s;font-family:Arial,sans-serif}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:#E86310;background:white}
 .field textarea{resize:vertical;min-height:65px}
 .total-box{background:#f0f7f0;border:1px solid #b6d9b6;border-radius:8px;padding:10px 14px;font-size:15px;font-weight:700;color:#1D9E75;display:flex;align-items:center;gap:8px;min-height:42px}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn{font-size:13px;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid #ddd;background:#f4f4f2;color:#2C2C2A;display:flex;align-items:center;gap:6px;font-weight:600;transition:all .2s;white-space:nowrap}
+.btn{font-size:13px;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid #ddd;background:#f4f4f2;color:#2C2C2A;display:flex;align-items:center;gap:6px;font-weight:600;transition:all .2s;white-space:nowrap;font-family:Arial,sans-serif}
 .btn:hover{background:#e8e8e6}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn.primary{background:#E86310;border-color:#E86310;color:white}
 .btn.primary:hover:not(:disabled){background:#CC5500}
+.btn.green{background:#1D9E75;border-color:#1D9E75;color:white}
+.btn.green:hover:not(:disabled){background:#0F6E56}
 .btn.sm{font-size:12px;padding:6px 12px}
+
+/* ── FILTROS ── */
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .filters .field{flex:1;min-width:120px}
+
+/* ── TABELA ── */
 .table-wrap{overflow-x:auto;margin-top:6px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:9px 10px;font-size:10px;font-weight:700;color:#888;border-bottom:1.5px solid #eee;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
@@ -63,12 +90,73 @@ tr:hover td{background:#fafaf8}
 .badge.aguardando{background:#FCEBEB;color:#A32D2D}
 .del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;padding:0 4px;transition:color .2s}
 .del-btn:hover{color:#E24B4A}
+.action-btn{background:none;border:none;cursor:pointer;color:#1A6FB5;font-size:14px;padding:0 4px;transition:color .2s}
+.action-btn:hover{color:#E86310}
 .empty{text-align:center;padding:2.5rem;color:#aaa;font-size:14px}
 .os-num{font-weight:700;color:#E86310;white-space:nowrap}
 .val-mo{color:#1D9E75;font-size:12px;white-space:nowrap}
 .val-peca{color:#1A6FB5;font-size:12px;white-space:nowrap}
 .val-total{font-weight:700;white-space:nowrap}
-.overlay{position:fixed;inset:0;background:rgba(44,44,42,.55);z-index:50;display:flex;align-items:center;justify-content:center}
+
+/* ── ORÇAMENTO FORM ── */
+.orc-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:6px;padding-bottom:6px;border-bottom:1px solid #f0f0f0}
+.num-badge{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#E86310;color:white;font-size:11px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+.itens-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px}
+.itens-table th{font-size:10px;font-weight:700;color:#888;text-align:left;padding:7px 8px;border-bottom:1.5px solid #eee;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+.itens-table td{padding:6px 4px;vertical-align:middle}
+.itens-table td input,.itens-table td select{font-size:12px;padding:6px 8px;width:100%;border:1px solid #ddd;border-radius:6px;background:#fafafa;color:#2C2C2A;font-family:Arial,sans-serif;outline:none}
+.itens-table td input:focus,.itens-table td select:focus{border-color:#E86310}
+.itens-table td.td-total{font-weight:700;color:#1D9E75;text-align:right;padding-right:8px;white-space:nowrap;font-size:13px}
+.col-desc{min-width:160px}.col-cat{width:140px}.col-qty{width:60px}.col-unit{width:110px}.col-tot{width:90px}.col-del{width:34px}
+.btn-add-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#E86310;background:none;border:1px dashed #E86310;border-radius:7px;padding:6px 14px;cursor:pointer;font-family:Arial,sans-serif;transition:background .2s}
+.btn-add-item:hover{background:rgba(232,99,16,.07)}
+.totals-wrap{display:flex;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid #eee}
+.totals-inner{width:260px}
+.total-row-orc{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:0.5px solid #eee}
+.total-row-orc:last-child{border-bottom:none;font-size:16px;font-weight:700;padding-top:8px}
+.total-row-orc .tl{color:#888}
+.total-row-orc .tv{color:#2C2C2A}
+.total-row-orc:last-child .tv{color:#E86310}
+.cond-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.contact-pref{display:flex;gap:8px;flex-wrap:wrap}
+.pref-opt{position:relative}
+.pref-opt input{position:absolute;opacity:0;width:0;height:0}
+.pref-opt label{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1px solid #ddd;background:#fafafa;cursor:pointer;font-size:12px;font-weight:600;color:#666;transition:all .18s}
+.pref-opt input:checked+label{border-color:#E86310;background:rgba(232,99,16,.07);color:#E86310}
+
+/* ── PREVIEW ORÇAMENTO ── */
+.orc-preview{display:none;background:white;border:1px solid #ddd;border-radius:12px;padding:2rem;margin-top:1rem}
+.orc-preview.visible{display:block}
+.prev-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:1rem;border-bottom:3px solid #E86310;margin-bottom:1.5rem}
+.prev-brand h2{font-size:20px;font-weight:700;color:#E86310;letter-spacing:1px}
+.prev-brand p{font-size:12px;color:#888;margin-top:3px;line-height:1.5}
+.prev-meta{text-align:right;font-size:12px;color:#888}
+.prev-meta strong{display:block;font-size:20px;color:#2C2C2A;font-weight:700}
+.prev-section{margin-bottom:1.5rem}
+.prev-section h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#888;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid #eee}
+.prev-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;font-size:13px}
+.prev-grid-2 .pk{color:#888}
+.prev-grid-2 .pv{color:#2C2C2A;font-weight:600}
+.prev-table{width:100%;border-collapse:collapse;font-size:13px}
+.prev-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;padding:7px 8px;border-bottom:1.5px solid #eee;text-align:left}
+.prev-table th:last-child,.prev-table td:last-child{text-align:right}
+.prev-table td{padding:8px 8px;border-bottom:0.5px solid #f5f5f5;color:#2C2C2A}
+.prev-table tr:last-child td{border-bottom:none}
+.cat-pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:#f0f0ee;color:#888;margin-left:5px}
+.prev-totals{display:flex;justify-content:flex-end;margin-top:1rem}
+.prev-totals-inner{width:280px}
+.pt-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:0.5px solid #eee}
+.pt-row:last-child{border-bottom:none;font-size:16px;font-weight:700;padding-top:8px}
+.pt-row .pk{color:#888}.pt-row .pv{color:#2C2C2A}
+.pt-row:last-child .pv{color:#E86310}
+.prev-cond{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:#f9f9f7;border-radius:8px;padding:12px 16px;margin-top:1.5rem;font-size:12px;color:#888}
+.prev-cond strong{display:block;font-size:13px;color:#2C2C2A;font-weight:600;margin-bottom:2px}
+.prev-footer{margin-top:2rem;padding-top:1rem;border-top:0.5px solid #eee;font-size:11px;color:#aaa;text-align:center}
+.prev-obs{margin-top:1rem;font-size:13px;color:#888}
+.prev-obs strong{color:#2C2C2A;display:block;margin-bottom:3px;font-size:13px}
+
+/* ── OVERLAY / TOAST ── */
+.overlay{position:fixed;inset:0;background:rgba(44,44,42,.55);z-index:200;display:flex;align-items:center;justify-content:center}
 .overlay.hidden{display:none}
 .overlay-box{background:white;border-radius:14px;padding:28px 24px;max-width:340px;width:90%;text-align:center}
 .overlay-box p{font-size:14px;color:#555;margin-top:10px}
@@ -78,103 +166,98 @@ tr:hover td{background:#fafaf8}
 .toast.show{display:flex}
 .toast.ok{border-left:4px solid #1D9E75}
 .toast.err{border-left:4px solid #E24B4A}
-.tip{background:#fffbe6;border:1px solid #f0d060;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a6000;margin-top:10px;line-height:1.6}
-@media(max-width:620px){
-  .form-grid,.form-grid.cols3{grid-template-columns:1fr}
-  .filters{flex-direction:column}
-  .topbar{padding:10px 14px}
-  th,td{padding:8px 7px;font-size:12px}
-}
+
+/* ── PRINT ── */
 @media print{
-  .topbar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .btn-row,.filters .btn,.del-btn,.setup-card{display:none!important}
+  .topbar,.tabs,.btn-row,.filters .btn,.del-btn,.action-btn,.setup-card,.orc-preview .btn-row{display:none!important}
+  .orc-preview{display:block!important;border:none;padding:0}
   body{background:white}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .form-grid,.form-grid.cols3,.cond-grid,.prev-grid-2,.prev-cond{grid-template-columns:1fr}
+  .filters{flex-direction:column}
+  th,td{padding:7px 6px;font-size:11px}
+  .tab{padding:9px 13px;font-size:12px}
+  .col-cat{display:none}
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 44" width="100" height="37">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 44" width="95" height="36">
     <circle cx="22" cy="22" r="15" fill="none" stroke="#CC3300" stroke-width="6" stroke-dasharray="77 19" stroke-dashoffset="-5" stroke-linecap="butt" transform="rotate(-90 22 22)"/>
     <circle cx="22" cy="22" r="15" fill="none" stroke="#E86310" stroke-width="6" stroke-dasharray="20 76" stroke-dashoffset="-53" stroke-linecap="round" transform="rotate(-90 22 22)"/>
     <polygon points="33,9 33,18 36,15 38,20 40,19 38,14 41,14" fill="white"/>
     <text x="46" y="20" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="14" letter-spacing="1" fill="white">CONCEITO</text>
     <text x="46" y="34" font-family="Arial,sans-serif" font-size="9" letter-spacing="3" fill="#E86310">INFORMATICA</text>
   </svg>
-  <div class="topbar-title">Controle de Assistência Técnica</div>
+  <div class="topbar-title">Sistema de Gestão</div>
   <div class="sync-status" id="sync-status"><i class="ti ti-cloud-off"></i> Não configurado</div>
-  <button class="btn sm" onclick="recarregar()" style="color:white;border-color:#555;background:rgba(255,255,255,0.1)" title="Atualizar dados"><i class="ti ti-refresh"></i></button>
+  <button class="btn sm" onclick="recarregar()" style="color:white;border-color:#555;background:rgba(255,255,255,0.1)" title="Atualizar"><i class="ti ti-refresh"></i></button>
 </div>
 
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('os')" id="tab-os"><i class="ti ti-clipboard-list"></i> Ordens de Serviço</div>
+  <div class="tab" onclick="switchTab('orc')" id="tab-orc"><i class="ti ti-file-invoice"></i> Gerar Orçamento</div>
+</div>
+
+<!-- OVERLAY -->
 <div class="overlay hidden" id="overlay">
-  <div class="overlay-box">
-    <div class="spinner"></div>
-    <p id="overlay-msg">Carregando...</p>
-  </div>
+  <div class="overlay-box"><div class="spinner"></div><p id="overlay-msg">Carregando...</p></div>
 </div>
 
+<!-- ══════════ ABA OS ══════════ -->
+<div class="tab-content active" id="content-os">
 <div class="container">
 
   <!-- SETUP -->
   <div class="setup-card" id="setup-card">
     <h2><i class="ti ti-cloud"></i> Configurar sincronização na nuvem (Google Apps Script)</h2>
-    <p>Siga os passos abaixo <strong>uma única vez</strong>. Depois disso, seus dados sincronizam automaticamente entre celular e computador, sem precisar de conta em nenhum serviço externo.</p>
+    <p>Siga os passos abaixo <strong>uma única vez</strong>. Depois disso, seus dados sincronizam automaticamente entre celular e computador.</p>
     <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div>Acesse <a href="https://script.google.com" target="_blank">script.google.com</a> com sua conta Google e clique em <strong>Novo projeto</strong></div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div>Apague tudo que tiver no editor e cole o código abaixo:<br>
+      <div class="step"><div class="step-num">1</div><div>Acesse <a href="https://script.google.com" target="_blank">script.google.com</a> com sua conta Google e clique em <strong>Novo projeto</strong></div></div>
+      <div class="step"><div class="step-num">2</div>
+        <div>Apague tudo e cole o código abaixo:
           <div style="margin-top:6px;background:#f5f5f3;border-radius:6px;padding:10px;font-family:monospace;font-size:11px;line-height:1.7;border:1px solid #ddd;white-space:pre-wrap">const SHEET_NAME = 'Assistencia';
-
 function doGet(e) {
   const sheet = getSheet();
   const data = sheet.getRange(1,1).getValue();
   return ContentService.createTextOutput(data || '{"ordens":[],"nextId":1}').setMimeType(ContentService.MimeType.JSON);
 }
-
 function doPost(e) {
   const sheet = getSheet();
   sheet.getRange(1,1).setValue(e.postData.contents);
   return ContentService.createTextOutput('ok');
 }
-
 function getSheet() {
   const ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID'));
   return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
 }
-
 function setup() {
   const ss = SpreadsheetApp.create('Conceito Assistencia Dados');
   PropertiesService.getScriptProperties().setProperty('SHEET_ID', ss.getId());
-  Logger.log('Planilha criada: ' + ss.getUrl());
+  Logger.log('Planilha: ' + ss.getUrl());
 }</div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div>No menu superior, clique em <strong>Executar</strong> e escolha a função <code>setup</code>. Autorize quando pedir.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div>Clique em <strong>Implantar &gt; Nova implantação</strong>. Tipo: <strong>App da Web</strong>. Quem pode acessar: <strong>Qualquer pessoa</strong>. Clique em Implantar e copie a URL gerada.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div>Cole a URL abaixo e clique em <strong>Conectar</strong>:</div>
-      </div>
+      <div class="step"><div class="step-num">3</div><div>Clique em <strong>Executar</strong> e escolha a função <code>setup</code>. Autorize quando pedir.</div></div>
+      <div class="step"><div class="step-num">4</div><div>Clique em <strong>Implantar &gt; Nova implantação</strong>. Tipo: <strong>App da Web</strong>. Quem acessa: <strong>Qualquer pessoa</strong>. Copie a URL.</div></div>
+      <div class="step"><div class="step-num">5</div><div>Cole a URL abaixo e clique em <strong>Conectar</strong>:</div></div>
     </div>
     <div class="url-row">
       <input id="script-url" placeholder="https://script.google.com/macros/s/...../exec"/>
       <button class="btn primary" onclick="conectar()"><i class="ti ti-plug"></i> Conectar</button>
       <button class="btn" onclick="document.getElementById('setup-card').style.display='none'"><i class="ti ti-x"></i> Fechar</button>
     </div>
-    <div class="tip"><i class="ti ti-info-circle"></i> <strong>Dica:</strong> Depois de conectar, salve o arquivo HTML no Google Drive. Abra ele de qualquer celular ou computador — os dados estarão sempre sincronizados.</div>
+    <div class="tip"><i class="ti ti-info-circle"></i> <strong>Dica:</strong> Salve este arquivo HTML no Google Drive e abra de qualquer dispositivo — os dados estarão sempre sincronizados.</div>
   </div>
 
+  <!-- METRICS -->
   <div class="metrics" id="metrics"></div>
 
   <!-- NOVO ATENDIMENTO -->
@@ -211,9 +294,7 @@ function setup() {
           <option value="concluido">Concluído</option>
         </select>
       </div>
-      <div class="field"><label>Observações</label>
-        <input id="f-obs" placeholder="Observações adicionais (opcional)"/>
-      </div>
+      <div class="field"><label>Observações</label><input id="f-obs" placeholder="Observações adicionais (opcional)"/></div>
     </div>
     <div class="btn-row">
       <button class="btn primary" id="btn-salvar" onclick="addOS()"><i class="ti ti-device-floppy"></i> Salvar atendimento</button>
@@ -252,7 +333,7 @@ function setup() {
             <th>Entrada</th><th>Saída</th>
             <th style="color:#1D9E75">Mão de obra</th>
             <th style="color:#1A6FB5">Peça</th>
-            <th>Total</th><th>Status</th><th></th>
+            <th>Total</th><th>Status</th><th>Ações</th>
           </tr>
         </thead>
         <tbody id="tabela"></tbody>
@@ -261,14 +342,142 @@ function setup() {
   </div>
 
 </div>
+</div>
+
+<!-- ══════════ ABA ORÇAMENTO ══════════ -->
+<div class="tab-content" id="content-orc">
+<div class="container">
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-file-invoice"></i> Gerador de Orçamento</div>
+
+    <!-- 1. Dados do cliente -->
+    <div class="orc-section-label"><span class="num-badge">1</span><i class="ti ti-user"></i> Dados do cliente</div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="field"><label>Nome / Empresa</label><input id="o-nome" placeholder="Ex: João Silva"/></div>
+      <div class="field"><label>Telefone / WhatsApp</label><input id="o-tel" placeholder="(51) 99999-9999"/></div>
+      <div class="field"><label>E-mail</label><input id="o-email" placeholder="cliente@email.com"/></div>
+      <div class="field"><label>Endereço / Cidade</label><input id="o-end" placeholder="Porto Alegre / RS" value="Porto Alegre / RS"/></div>
+    </div>
+
+    <!-- 2. Equipamento -->
+    <div class="orc-section-label"><span class="num-badge">2</span><i class="ti ti-device-laptop"></i> Equipamento</div>
+    <div class="form-grid cols3" style="margin-bottom:12px">
+      <div class="field"><label>Tipo</label>
+        <select id="o-tipo">
+          <option>Notebook</option><option>Computador Desktop</option>
+          <option>Tablet</option><option>Impressora</option>
+          <option>Servidor</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field"><label>Marca / Modelo</label><input id="o-modelo" placeholder="Ex: Dell Inspiron 15"/></div>
+      <div class="field"><label>Nº de série (opcional)</label><input id="o-serie" placeholder="SN123456"/></div>
+    </div>
+    <div class="form-grid full" style="margin-bottom:20px">
+      <div class="field"><label>Problema relatado</label><textarea id="o-problema" placeholder="Descreva o problema conforme informado pelo cliente..."></textarea></div>
+    </div>
+
+    <!-- 3. Itens -->
+    <div class="orc-section-label"><span class="num-badge">3</span><i class="ti ti-list-check"></i> Serviços e peças</div>
+    <table class="itens-table" id="itens-table">
+      <thead>
+        <tr>
+          <th class="col-desc">Descrição</th>
+          <th class="col-cat">Categoria</th>
+          <th class="col-qty">Qtd</th>
+          <th class="col-unit">Valor unit. (R$)</th>
+          <th class="col-tot">Total</th>
+          <th class="col-del"></th>
+        </tr>
+      </thead>
+      <tbody id="itens-body"></tbody>
+    </table>
+    <button class="btn-add-item" onclick="addItem()"><i class="ti ti-plus"></i> Adicionar item</button>
+
+    <div class="totals-wrap">
+      <div class="totals-inner">
+        <div class="total-row-orc"><span class="tl">Subtotal</span><span class="tv" id="o-sub">R$ 0,00</span></div>
+        <div class="total-row-orc">
+          <span class="tl">Desconto</span>
+          <span class="tv" style="display:flex;align-items:center;gap:6px">
+            <input id="o-desc" type="number" min="0" max="100" value="0" step="1" style="width:52px;font-size:13px;padding:3px 7px;border:1px solid #ddd;border-radius:5px;text-align:right;font-family:Arial" oninput="calcTotals()">
+            <span style="font-size:12px;color:#aaa">%</span>
+          </span>
+        </div>
+        <div class="total-row-orc"><span class="tl">Total</span><span class="tv" id="o-total">R$ 0,00</span></div>
+      </div>
+    </div>
+
+    <!-- 4. Condições -->
+    <div class="orc-section-label" style="margin-top:20px"><span class="num-badge">4</span><i class="ti ti-clipboard-text"></i> Condições e prazo</div>
+    <div class="cond-grid" style="margin-bottom:12px">
+      <div class="field"><label>Prazo de execução</label>
+        <select id="o-prazo">
+          <option>No ato (suporte remoto)</option>
+          <option>24 horas</option>
+          <option>2 a 3 dias úteis</option>
+          <option>3 a 5 dias úteis</option>
+          <option>A combinar</option>
+        </select>
+      </div>
+      <div class="field"><label>Forma de pagamento</label>
+        <select id="o-pag">
+          <option>PIX</option><option>Dinheiro</option>
+          <option>Cartão de débito</option><option>Cartão de crédito</option>
+          <option>PIX ou Dinheiro</option><option>A combinar</option>
+        </select>
+      </div>
+      <div class="field"><label>Validade do orçamento</label>
+        <select id="o-val">
+          <option>7 dias</option><option>15 dias</option><option>30 dias</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="field"><label>Retorno preferido do cliente</label>
+        <div class="contact-pref">
+          <div class="pref-opt"><input type="radio" name="retorno" id="r-wa" value="WhatsApp" checked><label for="r-wa"><i class="ti ti-brand-whatsapp"></i> WhatsApp</label></div>
+          <div class="pref-opt"><input type="radio" name="retorno" id="r-tel" value="Ligação"><label for="r-tel"><i class="ti ti-phone"></i> Ligação</label></div>
+          <div class="pref-opt"><input type="radio" name="retorno" id="r-email" value="E-mail"><label for="r-email"><i class="ti ti-mail"></i> E-mail</label></div>
+        </div>
+      </div>
+      <div class="field"><label>Observações / Garantia</label>
+        <input id="o-obs" value="Garantia de 90 dias nos serviços realizados. Peças com garantia do fabricante."/>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" onclick="gerarPreview()"><i class="ti ti-eye"></i> Visualizar orçamento</button>
+      <button class="btn green" onclick="enviarWA()"><i class="ti ti-brand-whatsapp"></i> Enviar pelo WhatsApp</button>
+      <button class="btn" onclick="limparOrc()"><i class="ti ti-trash"></i> Limpar</button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="orc-preview" id="orc-preview">
+    <div id="preview-content"></div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn primary" onclick="window.print()"><i class="ti ti-printer"></i> Imprimir / Salvar PDF</button>
+      <button class="btn green" onclick="enviarWA()"><i class="ti ti-brand-whatsapp"></i> Enviar pelo WhatsApp</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxg22_qI-j3OzjFe9wqXL_sMOSsFgj8P7t9Rp2iJnmzhWoml_ndejMGWsV558yl44IKHg/exec';
-localStorage.setItem('ci_script_url', SCRIPT_URL);
+// ═══════════════════════════════════════
+// DADOS E ESTADO
+// ═══════════════════════════════════════
+let SCRIPT_URL = localStorage.getItem('ci_script_url') || 'https://script.google.com/macros/s/AKfycbxg22_qI-j3OzjFe9wqXL_sMOSsFgj8P7t9Rp2iJnmzhWoml_ndejMGWsV558yl44IKHg/exec';
 let ordens = JSON.parse(localStorage.getItem('ci_ordens') || '[]');
 let nextId  = parseInt(localStorage.getItem('ci_nextId') || '1');
 let saving  = false;
+let orcNum  = Math.floor(Math.random()*900)+100;
+let itens   = [];
 
 // migrar dados antigos
 ordens = ordens.map(o => {
@@ -277,16 +486,25 @@ ordens = ordens.map(o => {
 });
 
 document.getElementById('f-entrada').value = new Date().toISOString().split('T')[0];
-
 document.getElementById('setup-card').style.display = 'none';
-recarregar();
+if (SCRIPT_URL) recarregar(); else render();
 
-// ===== NUVEM =====
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function switchTab(tab) {
+  ['os','orc'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('content-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+// ═══════════════════════════════════════
+// NUVEM
+// ═══════════════════════════════════════
 async function conectar() {
   const url = document.getElementById('script-url').value.trim();
-  if (!url || !url.includes('script.google.com')) {
-    toast('Cole a URL do Google Apps Script.','err'); return;
-  }
+  if (!url || !url.includes('script.google.com')) { toast('Cole a URL do Google Apps Script.','err'); return; }
   SCRIPT_URL = url;
   localStorage.setItem('ci_script_url', SCRIPT_URL);
   document.getElementById('setup-card').style.display = 'none';
@@ -315,61 +533,45 @@ async function recarregar() {
     setSyncStatus('err','<i class="ti ti-cloud-x"></i> Erro ao carregar');
     toast('Erro ao carregar da nuvem. Usando dados locais.','err');
     render();
-  } finally {
-    hideOverlay();
-  }
+  } finally { hideOverlay(); }
 }
 
 async function salvar() {
-  // sempre salva local
   localStorage.setItem('ci_ordens', JSON.stringify(ordens));
   localStorage.setItem('ci_nextId', nextId);
-
   if (!SCRIPT_URL || saving) return;
   saving = true;
   setSyncStatus('sync','<i class="ti ti-cloud-upload"></i> Salvando...');
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ordens, nextId}),
-      headers: {'Content-Type':'text/plain'} // evita preflight CORS
-    });
+    await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({ordens,nextId}), headers:{'Content-Type':'text/plain'} });
     setSyncStatus('ok','<i class="ti ti-cloud-check"></i> Salvo na nuvem');
   } catch(e) {
     setSyncStatus('err','<i class="ti ti-cloud-x"></i> Erro ao salvar');
     toast('Salvo localmente. Erro ao sincronizar nuvem.','err');
-  } finally {
-    saving = false;
-  }
+  } finally { saving = false; }
 }
 
-// ===== UI =====
+// ═══════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════
 function setSyncStatus(cls, html) {
   const el = document.getElementById('sync-status');
-  el.className = 'sync-status ' + cls;
+  el.className = 'sync-status '+cls;
   el.innerHTML = html;
 }
-function showOverlay(msg) {
-  document.getElementById('overlay-msg').textContent = msg;
-  document.getElementById('overlay').classList.remove('hidden');
-}
+function showOverlay(msg) { document.getElementById('overlay-msg').textContent=msg; document.getElementById('overlay').classList.remove('hidden'); }
 function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
 function toast(msg, tipo='ok') {
   const el = document.getElementById('toast');
-  el.className = 'toast show ' + tipo;
-  el.innerHTML = `<i class="ti ti-${tipo==='ok'?'check':'alert-circle'}"></i> ${msg}`;
-  clearTimeout(el._t); el._t = setTimeout(()=>el.className='toast',3500);
+  el.className='toast show '+tipo;
+  el.innerHTML=`<i class="ti ti-${tipo==='ok'?'check':'alert-circle'}"></i> ${msg}`;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.className='toast',3500);
 }
-function fmtDate(d) {
-  if(!d) return '—';
-  const [y,m,dia]=d.split('-'); return `${dia}/${m}/${y}`;
-}
-function fmtVal(v) {
-  return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+function fmtDate(d) { if(!d)return'—'; const[y,m,dia]=d.split('-'); return`${dia}/${m}/${y}`; }
+function fmtVal(v) { return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function badgeHtml(s) {
   const map={concluido:'Concluído',andamento:'Em andamento',aguardando:'Aguardando peça'};
-  return `<span class="badge ${s}">${map[s]||s}</span>`;
+  return`<span class="badge ${s}">${map[s]||s}</span>`;
 }
 function atualizarTotal() {
   const mo=parseFloat(document.getElementById('f-mao-obra').value||0);
@@ -377,7 +579,9 @@ function atualizarTotal() {
   document.getElementById('total-val').textContent=fmtVal(mo+pc);
 }
 
-// ===== RENDER =====
+// ═══════════════════════════════════════
+// RENDER OS
+// ═══════════════════════════════════════
 function getFiltered() {
   const ini=document.getElementById('fil-inicio').value;
   const fim=document.getElementById('fil-fim').value;
@@ -395,7 +599,7 @@ function render() {
   const tbody=document.getElementById('tabela');
   tbody.innerHTML = f.length ? f.map(o=>{
     const mo=parseFloat(o.maoObra||0), pc=parseFloat(o.peca||0);
-    return `<tr>
+    return`<tr>
       <td class="os-num">#${String(o.id).padStart(3,'0')}</td>
       <td style="font-weight:600">${o.cliente}</td>
       <td>${o.equip}</td>
@@ -405,7 +609,10 @@ function render() {
       <td class="val-peca">${fmtVal(pc)}</td>
       <td class="val-total">${fmtVal(mo+pc)}</td>
       <td>${badgeHtml(o.status)}</td>
-      <td><button class="del-btn" onclick="del(${o.id})"><i class="ti ti-trash"></i></button></td>
+      <td style="white-space:nowrap">
+        <button class="action-btn" onclick="gerarOrcamentoFromOS(${o.id})" title="Gerar orçamento desta OS"><i class="ti ti-file-invoice"></i></button>
+        <button class="del-btn" onclick="del(${o.id})" title="Excluir"><i class="ti ti-trash"></i></button>
+      </td>
     </tr>`;
   }).join('') : '<tr><td colspan="11" class="empty"><i class="ti ti-inbox" style="font-size:30px;display:block;margin-bottom:8px"></i>Nenhum atendimento</td></tr>';
 
@@ -422,7 +629,9 @@ function render() {
     <div class="metric"><div class="metric-label"><i class="ti ti-clock" style="vertical-align:-2px;margin-right:3px"></i>Em aberto</div><div class="metric-value amber">${aberto}</div></div>`;
 }
 
-// ===== CRUD =====
+// ═══════════════════════════════════════
+// CRUD OS
+// ═══════════════════════════════════════
 async function addOS() {
   const cliente=document.getElementById('f-cliente').value.trim();
   const equip=document.getElementById('f-equip').value.trim();
@@ -446,8 +655,7 @@ async function addOS() {
 async function del(id) {
   if(!confirm('Excluir este atendimento?')) return;
   ordens=ordens.filter(o=>o.id!==id);
-  render();
-  await salvar();
+  render(); await salvar();
   toast('Excluído.');
 }
 
@@ -465,6 +673,222 @@ function clearFilters() {
   document.getElementById('fil-status').value='';
   render();
 }
+
+// ═══════════════════════════════════════
+// GERAR ORÇAMENTO A PARTIR DE OS
+// ═══════════════════════════════════════
+function gerarOrcamentoFromOS(id) {
+  const os = ordens.find(o=>o.id===id);
+  if (!os) return;
+
+  // Preenche aba de orçamento com dados da OS
+  document.getElementById('o-nome').value = os.cliente || '';
+  document.getElementById('o-tel').value = '';
+  document.getElementById('o-email').value = '';
+  document.getElementById('o-end').value = 'Porto Alegre / RS';
+  document.getElementById('o-modelo').value = os.equip || '';
+  document.getElementById('o-problema').value = os.desc || '';
+
+  // Monta itens
+  itens = [];
+  if (parseFloat(os.maoObra||0) > 0) {
+    itens.push({id:Date.now(), desc: os.desc || 'Serviço técnico', cat:'Serviço de mão de obra', qty:1, unit:parseFloat(os.maoObra)});
+  }
+  if (parseFloat(os.peca||0) > 0) {
+    itens.push({id:Date.now()+1, desc:'Peça / material', cat:'Peça / componente', qty:1, unit:parseFloat(os.peca)});
+  }
+  if (!itens.length) {
+    itens.push({id:Date.now(), desc:'', cat:'Serviço de mão de obra', qty:1, unit:0});
+  }
+
+  renderItens();
+  document.getElementById('orc-preview').classList.remove('visible');
+  switchTab('orc');
+  toast('OS #'+String(id).padStart(3,'0')+' carregada no orçamento!');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+// ORÇAMENTO — ITENS
+// ═══════════════════════════════════════
+const CATS = ['Serviço de mão de obra','Peça / componente','Software / licença','Deslocamento / visita','Outros'];
+
+function addItem(desc='',cat='Serviço de mão de obra',qty=1,unit=0) {
+  itens.push({id:Date.now()+Math.random(), desc, cat, qty, unit});
+  renderItens();
+}
+
+function renderItens() {
+  const body = document.getElementById('itens-body');
+  if (!itens.length) {
+    body.innerHTML='<tr><td colspan="6" style="text-align:center;padding:14px;color:#aaa;font-size:13px">Nenhum item — clique em "Adicionar item"</td></tr>';
+    calcTotals(); return;
+  }
+  body.innerHTML = itens.map((it,idx)=>`<tr>
+    <td class="col-desc"><input type="text" value="${it.desc}" placeholder="Ex: Formatação e instalação Windows 11" oninput="itens[${idx}].desc=this.value"></td>
+    <td class="col-cat"><select onchange="itens[${idx}].cat=this.value">${CATS.map(c=>`<option${c===it.cat?' selected':''}>${c}</option>`).join('')}</select></td>
+    <td class="col-qty"><input type="number" min="1" value="${it.qty}" style="text-align:center" oninput="itens[${idx}].qty=parseFloat(this.value)||1;calcTotals()"></td>
+    <td class="col-unit"><input type="number" min="0" step="0.01" value="${it.unit}" oninput="itens[${idx}].unit=parseFloat(this.value)||0;calcTotals()"></td>
+    <td class="col-tot td-total" id="rt-${idx}">${fmtVal(it.qty*it.unit)}</td>
+    <td class="col-del"><button class="del-btn" onclick="removeItem(${idx})"><i class="ti ti-x"></i></button></td>
+  </tr>`).join('');
+  calcTotals();
+}
+
+function removeItem(idx) { itens.splice(idx,1); renderItens(); }
+
+function calcTotals() {
+  const sub = itens.reduce((a,i)=>a+(i.qty*i.unit),0);
+  const desc = parseFloat(document.getElementById('o-desc').value)||0;
+  const total = sub*(1-desc/100);
+  document.getElementById('o-sub').textContent = fmtVal(sub);
+  document.getElementById('o-total').textContent = fmtVal(total);
+  itens.forEach((_,idx)=>{
+    const el=document.getElementById('rt-'+idx);
+    if(el) el.textContent=fmtVal(itens[idx].qty*itens[idx].unit);
+  });
+}
+
+// ═══════════════════════════════════════
+// PREVIEW ORÇAMENTO
+// ═══════════════════════════════════════
+function gerarPreview() {
+  const nome  = document.getElementById('o-nome').value||'—';
+  const tel   = document.getElementById('o-tel').value||'—';
+  const email = document.getElementById('o-email').value||'—';
+  const end   = document.getElementById('o-end').value||'—';
+  const tipo  = document.getElementById('o-tipo').value;
+  const mod   = document.getElementById('o-modelo').value||'—';
+  const serie = document.getElementById('o-serie').value;
+  const prob  = document.getElementById('o-problema').value||'—';
+  const prazo = document.getElementById('o-prazo').value;
+  const pag   = document.getElementById('o-pag').value;
+  const val   = document.getElementById('o-val').value;
+  const obs   = document.getElementById('o-obs').value;
+  const ret   = document.querySelector('input[name="retorno"]:checked')?.value||'WhatsApp';
+  const desc  = parseFloat(document.getElementById('o-desc').value)||0;
+  const sub   = itens.reduce((a,i)=>a+i.qty*i.unit,0);
+  const total = sub*(1-desc/100);
+  const hoje  = new Date().toLocaleDateString('pt-BR');
+
+  const itensHTML = itens.length
+    ? itens.map(it=>`<tr>
+        <td>${it.desc||'—'}<span class="cat-pill">${it.cat}</span></td>
+        <td style="text-align:center">${it.qty}</td>
+        <td style="text-align:right">${fmtVal(it.unit)}</td>
+        <td style="text-align:right;font-weight:700">${fmtVal(it.qty*it.unit)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" style="color:#aaa;text-align:center;padding:12px">Nenhum item</td></tr>';
+
+  document.getElementById('preview-content').innerHTML=`
+    <div class="prev-header">
+      <div class="prev-brand">
+        <h2>CONCEITO INFORMÁTICA</h2>
+        <p>Av. Prof. Paula Soares, 284 — Porto Alegre / RS<br>(51) 3392-0202 · contato@conceitoinformaticars.com.br</p>
+      </div>
+      <div class="prev-meta">
+        <span>Orçamento</span>
+        <strong>#${orcNum}</strong>
+        <span>Data: ${hoje}</span>
+      </div>
+    </div>
+
+    <div class="prev-section">
+      <h3>Cliente</h3>
+      <div class="prev-grid-2">
+        <span class="pk">Nome</span><span class="pv">${nome}</span>
+        <span class="pk">Telefone</span><span class="pv">${tel}</span>
+        <span class="pk">E-mail</span><span class="pv">${email}</span>
+        <span class="pk">Endereço</span><span class="pv">${end}</span>
+        <span class="pk">Retorno preferido</span><span class="pv">${ret}</span>
+      </div>
+    </div>
+
+    <div class="prev-section">
+      <h3>Equipamento</h3>
+      <div class="prev-grid-2">
+        <span class="pk">Tipo</span><span class="pv">${tipo}</span>
+        <span class="pk">Marca / Modelo</span><span class="pv">${mod}</span>
+        ${serie?`<span class="pk">Nº de série</span><span class="pv">${serie}</span>`:''}
+        <span class="pk">Problema relatado</span><span class="pv">${prob}</span>
+      </div>
+    </div>
+
+    <div class="prev-section">
+      <h3>Serviços e Peças</h3>
+      <table class="prev-table">
+        <thead><tr><th>Descrição</th><th style="text-align:center">Qtd</th><th style="text-align:right">Unit.</th><th style="text-align:right">Total</th></tr></thead>
+        <tbody>${itensHTML}</tbody>
+      </table>
+      <div class="prev-totals">
+        <div class="prev-totals-inner">
+          <div class="pt-row"><span class="pk">Subtotal</span><span class="pv">${fmtVal(sub)}</span></div>
+          ${desc>0?`<div class="pt-row"><span class="pk">Desconto (${desc}%)</span><span class="pv">- ${fmtVal(sub*desc/100)}</span></div>`:''}
+          <div class="pt-row"><span class="pk">Total</span><span class="pv">${fmtVal(total)}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prev-cond">
+      <div><strong>${prazo}</strong>Prazo de execução</div>
+      <div><strong>${pag}</strong>Forma de pagamento</div>
+      <div><strong>${val}</strong>Validade</div>
+    </div>
+    ${obs?`<div class="prev-obs"><strong>Observações</strong>${obs}</div>`:''}
+    <div class="prev-footer">Conceito Informática · (51) 3392-0202 · www.conceitoinformaticars.com.br · Orçamento nº ${orcNum} emitido em ${hoje}</div>
+  `;
+
+  const pw = document.getElementById('orc-preview');
+  pw.classList.add('visible');
+  pw.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════
+// WHATSAPP
+// ═══════════════════════════════════════
+function enviarWA() {
+  const nome  = document.getElementById('o-nome').value||'—';
+  const tel   = document.getElementById('o-tel').value||'—';
+  const tipo  = document.getElementById('o-tipo').value;
+  const mod   = document.getElementById('o-modelo').value||'—';
+  const prazo = document.getElementById('o-prazo').value;
+  const pag   = document.getElementById('o-pag').value;
+  const val   = document.getElementById('o-val').value;
+  const obs   = document.getElementById('o-obs').value;
+  const desc  = parseFloat(document.getElementById('o-desc').value)||0;
+  const sub   = itens.reduce((a,i)=>a+i.qty*i.unit,0);
+  const total = sub*(1-desc/100);
+
+  let msg = `🖥️ *ORÇAMENTO #${orcNum} — CONCEITO INFORMÁTICA*\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `👤 *Cliente:* ${nome}\n`;
+  msg += `📱 *Telefone:* ${tel}\n`;
+  msg += `💻 *Equipamento:* ${tipo} — ${mod}\n\n`;
+  msg += `🔧 *SERVIÇOS / PEÇAS:*\n`;
+  itens.forEach(it=>{ msg+=`• ${it.desc||'Item'} (${it.qty}x) — ${fmtVal(it.qty*it.unit)}\n`; });
+  msg += `\n`;
+  if(desc>0) { msg+=`Subtotal: ${fmtVal(sub)}\nDesconto (${desc}%): - ${fmtVal(sub*desc/100)}\n`; }
+  msg += `✅ *TOTAL: ${fmtVal(total)}*\n\n`;
+  msg += `⏰ Prazo: ${prazo}\n💳 Pagamento: ${pag}\n📅 Validade: ${val}\n`;
+  if(obs) msg+=`\n📝 ${obs}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━\n_Conceito Informática · (51) 3392-0202_`;
+
+  window.open('https://api.whatsapp.com/send?phone=5551333920202&text='+encodeURIComponent(msg),'_blank');
+}
+
+function limparOrc() {
+  ['o-nome','o-tel','o-email','o-modelo','o-serie','o-problema'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('o-end').value='Porto Alegre / RS';
+  document.getElementById('o-desc').value=0;
+  document.getElementById('o-obs').value='Garantia de 90 dias nos serviços realizados. Peças com garantia do fabricante.';
+  itens=[];
+  orcNum=Math.floor(Math.random()*900)+100;
+  renderItens();
+  document.getElementById('orc-preview').classList.remove('visible');
+}
+
+// init orçamento
+renderItens();
 </script>
 </body>
 </html>
