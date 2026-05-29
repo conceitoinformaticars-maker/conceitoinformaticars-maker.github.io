@@ -92,6 +92,17 @@ tr:hover td{background:#fafaf8}
 .del-btn:hover{color:#E24B4A}
 .action-btn{background:none;border:none;cursor:pointer;color:#1A6FB5;font-size:14px;padding:0 4px;transition:color .2s}
 .action-btn:hover{color:#E86310}
+.status-select{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;border:none;cursor:pointer;outline:none;font-family:Arial,sans-serif;appearance:none;-webkit-appearance:none;text-align:center;min-width:120px}
+.status-select.status-concluido{background:#EAF3DE;color:#3B6D11}
+.status-select.status-andamento{background:#FAEEDA;color:#854F0B}
+.status-select.status-aguardando{background:#FCEBEB;color:#A32D2D}
+/* MODAL EDIÇÃO */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,44,42,.6);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.hidden{display:none}
+.modal-box{background:white;border-radius:14px;padding:24px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal-box h3{font-size:15px;font-weight:700;color:#2C2C2A;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal-box h3 i{color:#E86310}
+.modal-footer{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;justify-content:flex-end}
 .empty{text-align:center;padding:2.5rem;color:#aaa;font-size:14px}
 .os-num{font-weight:700;color:#E86310;white-space:nowrap}
 .val-mo{color:#1D9E75;font-size:12px;white-space:nowrap}
@@ -466,6 +477,41 @@ function setup() {
 </div>
 </div>
 
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="modal-box">
+    <h3><i class="ti ti-pencil"></i> Editar OS <span id="edit-os-num" style="color:#E86310"></span></h3>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="field"><label>Cliente</label><input id="edit-cliente"/></div>
+      <div class="field"><label>Equipamento</label><input id="edit-equip"/></div>
+      <div class="field"><label>Data de entrada</label><input id="edit-entrada" type="date"/></div>
+      <div class="field"><label>Data de saída</label><input id="edit-saida" type="date"/></div>
+    </div>
+    <div class="form-grid full" style="margin-top:12px">
+      <div class="field"><label>Descrição do serviço</label><textarea id="edit-desc"></textarea></div>
+    </div>
+    <div class="form-grid cols3" style="margin-top:12px">
+      <div class="field"><label>Mão de obra (R$)</label><input id="edit-mao-obra" type="number" min="0" step="0.01" oninput="atualizarTotalEdit()"/></div>
+      <div class="field"><label>Peça / Material (R$)</label><input id="edit-peca" type="number" min="0" step="0.01" oninput="atualizarTotalEdit()"/></div>
+      <div class="field"><label>Total</label><div class="total-box"><i class="ti ti-coin"></i><span id="edit-total-val">R$ 0,00</span></div></div>
+    </div>
+    <div class="form-grid" style="margin-top:12px">
+      <div class="field"><label>Status</label>
+        <select id="edit-status">
+          <option value="andamento">Em andamento</option>
+          <option value="aguardando">Aguardando peça</option>
+          <option value="concluido">Concluído</option>
+        </select>
+      </div>
+      <div class="field"><label>Observações</label><input id="edit-obs"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="fecharModal()"><i class="ti ti-x"></i> Cancelar</button>
+      <button class="btn primary" onclick="salvarEdicao()"><i class="ti ti-device-floppy"></i> Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -608,9 +654,16 @@ function render() {
       <td class="val-mo">${fmtVal(mo)}</td>
       <td class="val-peca">${fmtVal(pc)}</td>
       <td class="val-total">${fmtVal(mo+pc)}</td>
-      <td>${badgeHtml(o.status)}</td>
+      <td>
+        <select class="status-select status-${o.status}" onchange="alterarStatus(${o.id},this.value)">
+          <option value="andamento" ${o.status==='andamento'?'selected':''}>Em andamento</option>
+          <option value="aguardando" ${o.status==='aguardando'?'selected':''}>Aguardando peça</option>
+          <option value="concluido" ${o.status==='concluido'?'selected':''}>Concluído</option>
+        </select>
+      </td>
       <td style="white-space:nowrap">
-        <button class="action-btn" onclick="gerarOrcamentoFromOS(${o.id})" title="Gerar orçamento desta OS"><i class="ti ti-file-invoice"></i></button>
+        <button class="action-btn" onclick="editarOS(${o.id})" title="Editar OS"><i class="ti ti-pencil"></i></button>
+        <button class="action-btn" onclick="gerarOrcamentoFromOS(${o.id})" title="Gerar orçamento"><i class="ti ti-file-invoice"></i></button>
         <button class="del-btn" onclick="del(${o.id})" title="Excluir"><i class="ti ti-trash"></i></button>
       </td>
     </tr>`;
@@ -657,6 +710,73 @@ async function del(id) {
   ordens=ordens.filter(o=>o.id!==id);
   render(); await salvar();
   toast('Excluído.');
+}
+
+async function alterarStatus(id, novoStatus) {
+  const os = ordens.find(o=>o.id===id);
+  if (!os) return;
+  os.status = novoStatus;
+  // atualiza cor do select sem re-renderizar tudo
+  const selects = document.querySelectorAll('.status-select');
+  selects.forEach(s => {
+    if (s.onchange && s.onchange.toString().includes(id)) {
+      s.className = 'status-select status-'+novoStatus;
+    }
+  });
+  render();
+  await salvar();
+  toast('Status atualizado!');
+}
+
+function editarOS(id) {
+  const os = ordens.find(o=>o.id===id);
+  if (!os) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-os-num').textContent = '#'+String(id).padStart(3,'0');
+  document.getElementById('edit-cliente').value = os.cliente||'';
+  document.getElementById('edit-equip').value = os.equip||'';
+  document.getElementById('edit-entrada').value = os.entrada||'';
+  document.getElementById('edit-saida').value = os.saida||'';
+  document.getElementById('edit-desc').value = os.desc||'';
+  document.getElementById('edit-mao-obra').value = os.maoObra||0;
+  document.getElementById('edit-peca').value = os.peca||0;
+  document.getElementById('edit-status').value = os.status||'andamento';
+  document.getElementById('edit-obs').value = os.obs||'';
+  atualizarTotalEdit();
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function atualizarTotalEdit() {
+  const mo = parseFloat(document.getElementById('edit-mao-obra').value||0);
+  const pc = parseFloat(document.getElementById('edit-peca').value||0);
+  document.getElementById('edit-total-val').textContent = fmtVal(mo+pc);
+}
+
+async function salvarEdicao() {
+  const id = parseInt(document.getElementById('edit-id').value);
+  const os = ordens.find(o=>o.id===id);
+  if (!os) return;
+  const cliente = document.getElementById('edit-cliente').value.trim();
+  const equip   = document.getElementById('edit-equip').value.trim();
+  const desc    = document.getElementById('edit-desc').value.trim();
+  if (!cliente||!equip||!desc) { toast('Preencha cliente, equipamento e descrição.','err'); return; }
+  os.cliente = cliente;
+  os.equip   = equip;
+  os.entrada = document.getElementById('edit-entrada').value;
+  os.saida   = document.getElementById('edit-saida').value;
+  os.desc    = desc;
+  os.maoObra = parseFloat(document.getElementById('edit-mao-obra').value||0);
+  os.peca    = parseFloat(document.getElementById('edit-peca').value||0);
+  os.status  = document.getElementById('edit-status').value;
+  os.obs     = document.getElementById('edit-obs').value.trim();
+  fecharModal();
+  render();
+  await salvar();
+  toast('OS atualizada com sucesso!');
+}
+
+function fecharModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
 }
 
 function clearForm() {
@@ -886,6 +1006,11 @@ function limparOrc() {
   renderItens();
   document.getElementById('orc-preview').classList.remove('visible');
 }
+
+// fechar modal clicando fora
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
 
 // init orçamento
 renderItens();
