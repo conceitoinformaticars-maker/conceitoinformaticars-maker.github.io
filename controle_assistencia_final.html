@@ -662,6 +662,7 @@ function render() {
         </select>
       </td>
       <td style="white-space:nowrap">
+        <button class="action-btn" onclick="imprimirOS(${o.id})" title="PDF da OS para o cliente"><i class="ti ti-file-type-pdf"></i></button>
         <button class="action-btn" onclick="editarOS(${o.id})" title="Editar OS"><i class="ti ti-pencil"></i></button>
         <button class="action-btn" onclick="gerarOrcamentoFromOS(${o.id})" title="Gerar orçamento"><i class="ti ti-file-invoice"></i></button>
         <button class="del-btn" onclick="del(${o.id})" title="Excluir"><i class="ti ti-trash"></i></button>
@@ -792,6 +793,101 @@ function clearFilters() {
   document.getElementById('fil-fim').value='';
   document.getElementById('fil-status').value='';
   render();
+}
+
+// ═══════════════════════════════════════
+// PDF / IMPRESSÃO DA OS (via cliente)
+// ═══════════════════════════════════════
+function escHtml(s) {
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function imprimirOS(id) {
+  const os = ordens.find(o=>o.id===id);
+  if (!os) return;
+  const mo = parseFloat(os.maoObra||0), pc = parseFloat(os.peca||0), total = mo+pc;
+  const num = String(os.id).padStart(3,'0');
+  const statusTxt = {andamento:'Em andamento', aguardando:'Aguardando peça', concluido:'Concluído'}[os.status] || '—';
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const garantia = 'Garantia de 90 dias nos serviços realizados. Peças com garantia do fabricante.';
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"/>
+<title>OS ${num} — ${escHtml(os.cliente)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+@page{size:A4;margin:14mm}
+body{font-family:Arial,sans-serif;color:#2C2C2A;font-size:13px;line-height:1.5;padding:8px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:4px solid #E86310;padding-bottom:12px;margin-bottom:18px}
+.brand h1{font-size:20px;letter-spacing:1px;color:#2C2C2A}
+.brand h1 span{color:#E86310}
+.brand p{font-size:11px;color:#777;margin-top:4px}
+.meta{text-align:right}
+.meta small{display:block;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px}
+.meta strong{display:block;font-size:24px;color:#E86310;line-height:1.1}
+.meta span{font-size:11px;color:#777}
+h2{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#E86310;border-bottom:1px solid #eee;padding-bottom:4px;margin:18px 0 8px}
+.grid{display:grid;grid-template-columns:150px 1fr;gap:5px 10px}
+.k{color:#888}.v{font-weight:600}
+.box{background:#f9f9f7;border-radius:6px;padding:10px 12px;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;margin-top:4px}
+th{text-align:left;font-size:11px;color:#888;border-bottom:1px solid #ddd;padding:6px 4px}
+td{padding:7px 4px;border-bottom:1px solid #f0f0ee}
+th.r,td.r{text-align:right}
+tr.tot td{border-bottom:none;font-size:15px;font-weight:700;padding-top:10px}
+tr.tot td.r{color:#E86310}
+.status{display:inline-block;padding:2px 10px;border-radius:12px;background:#fff3eb;color:#CC5500;font-weight:700;font-size:12px}
+.sign{display:flex;gap:40px;margin-top:60px}
+.sign div{flex:1;border-top:1px solid #333;text-align:center;font-size:11px;padding-top:5px;color:#555}
+.foot{margin-top:28px;padding-top:10px;border-top:1px solid #eee;font-size:10px;color:#aaa;text-align:center}
+</style></head><body>
+<div class="head">
+  <div class="brand">
+    <h1>CONCEITO <span>INFORMÁTICA</span></h1>
+    <p>Av. Prof. Paula Soares, 284 — Porto Alegre / RS<br>(51) 3392-0202 · contato@conceitoinformaticars.com.br</p>
+  </div>
+  <div class="meta"><small>Ordem de Serviço</small><strong>#${num}</strong><span>Emitida em ${hoje}</span></div>
+</div>
+
+<h2>Cliente</h2>
+<div class="grid"><span class="k">Nome</span><span class="v">${escHtml(os.cliente)}</span></div>
+
+<h2>Equipamento</h2>
+<div class="grid">
+  <span class="k">Equipamento</span><span class="v">${escHtml(os.equip)}</span>
+  <span class="k">Data de entrada</span><span class="v">${fmtDate(os.entrada)}</span>
+  <span class="k">Data de saída</span><span class="v">${fmtDate(os.saida)}</span>
+  <span class="k">Situação</span><span class="v"><span class="status">${statusTxt}</span></span>
+</div>
+
+<h2>Serviço realizado</h2>
+<div class="box">${escHtml(os.desc)||'—'}</div>
+
+<h2>Valores</h2>
+<table>
+  <thead><tr><th>Item</th><th class="r">Valor</th></tr></thead>
+  <tbody>
+    <tr><td>Mão de obra</td><td class="r">${fmtVal(mo)}</td></tr>
+    <tr><td>Peça / material</td><td class="r">${fmtVal(pc)}</td></tr>
+    <tr class="tot"><td>Total</td><td class="r">${fmtVal(total)}</td></tr>
+  </tbody>
+</table>
+
+${os.obs?`<h2>Observações</h2><div class="box">${escHtml(os.obs)}</div>`:''}
+
+<h2>Garantia</h2>
+<div class="box">${garantia}</div>
+
+<div class="sign"><div>Assinatura do cliente</div><div>Conceito Informática</div></div>
+<div class="foot">Conceito Informática · (51) 3392-0202 · www.conceitoinformaticars.com.br · OS nº ${num}</div>
+<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permita pop-ups neste site para gerar o PDF da OS.', 'err'); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
 }
 
 // ═══════════════════════════════════════
